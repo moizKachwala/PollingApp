@@ -64,7 +64,10 @@ public class User extends DateAudit {
 
     public Long getId() {
         return id;
+    }
 
+    public String getFullName() {
+        return firstname + " " + lastname;
     }
 
     public String getFirstname() {
