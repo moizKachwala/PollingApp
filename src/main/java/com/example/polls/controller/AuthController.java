@@ -1,12 +1,10 @@
 package com.example.polls.controller;
 
 import com.example.polls.exception.AppException;
+import com.example.polls.mapper.UserMapper;
 import com.example.polls.model.Role;
 import com.example.polls.model.User;
-import com.example.polls.payload.ApiResponse;
-import com.example.polls.payload.JwtAuthenticationResponse;
-import com.example.polls.payload.LoginRequest;
-import com.example.polls.payload.SignUpRequest;
+import com.example.polls.payload.*;
 import com.example.polls.repository.RoleRepository;
 import com.example.polls.repository.UserRepository;
 import com.example.polls.security.JwtTokenProvider;
@@ -27,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Created by rajeevkumarsingh on 02/08/17.
@@ -55,7 +54,7 @@ public class AuthController {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsernameOrEmail(),
+                        loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
@@ -63,7 +62,12 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+
+        Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
+
+        UserBasic userBasicDto = UserMapper.INSTANCE.UserToUserBasic(user.get());
+
+        return ResponseEntity.ok(new AuthenticationResponse(userBasicDto, jwt));
     }
 
     @PostMapping("/signup")

@@ -20,6 +20,9 @@ public class Permission {
     @Size(max = 50)
     private String type;
 
+    public Permission(){
+    }
+
     public Permission(String name, String type) {
         this.name = name;
         this.type = type;
