@@ -5,6 +5,8 @@ import com.example.polls.model.audit.DateAudit;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles", uniqueConstraints = {
@@ -24,6 +26,12 @@ public class Role extends DateAudit {
 
     @Size(max = 550)
     private String description;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "role_permissions",
+        joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> permissions = new HashSet<>();
 
     public Role() {
     }
