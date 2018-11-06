@@ -1,15 +1,18 @@
-package com.example.polls.payload;
+package com.example.polls.payload.user;
+
+import com.example.polls.payload.role.RoleBasicDto;
 
 import java.util.Set;
 
-public class UserBasic {
+public class UserBasicDto {
 
     private Long id;
     private String firstname;
     private String lastname;
     private String username;
     private String email;
-    private Set<RoleBasic> roles;
+
+    private Set<RoleBasicDto> roles;
 
     public Long getId() {
         return id;
@@ -51,11 +54,11 @@ public class UserBasic {
         this.email = email;
     }
 
-    public Set<RoleBasic> getRoles() {
+    public Set<RoleBasicDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<RoleBasic> roles) {
+    public void setRoles(Set<RoleBasicDto> roles) {
         this.roles = roles;
     }
 }

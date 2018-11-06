@@ -5,6 +5,7 @@ import com.example.polls.mapper.UserMapper;
 import com.example.polls.model.Role;
 import com.example.polls.model.User;
 import com.example.polls.payload.*;
+import com.example.polls.payload.user.UserBasicDto;
 import com.example.polls.repository.RoleRepository;
 import com.example.polls.repository.UserRepository;
 import com.example.polls.security.JwtTokenProvider;
@@ -65,7 +66,7 @@ public class AuthController {
 
         Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
 
-        UserBasic userBasicDto = UserMapper.INSTANCE.UserToUserBasic(user.get());
+        UserBasicDto userBasicDto = UserMapper.MAPPER.UserToUserBasicDto(user.get());
 
         return ResponseEntity.ok(new AuthenticationResponse(userBasicDto, jwt));
     }

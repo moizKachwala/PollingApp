@@ -1,14 +1,13 @@
 package com.example.polls.mapper;
 
 import com.example.polls.model.User;
-import com.example.polls.payload.UserBasic;
+import com.example.polls.payload.user.UserBasicDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface UserMapper {
+    UserMapper MAPPER = Mappers.getMapper(UserMapper.class);
 
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
-    UserBasic UserToUserBasic(User user);
+    UserBasicDto UserToUserBasicDto(User user);
 }
