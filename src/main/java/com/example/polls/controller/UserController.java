@@ -1,20 +1,34 @@
 package com.example.polls.controller;
 
+import antlr.StringUtils;
 import com.example.polls.exception.ResourceNotFoundException;
+import com.example.polls.mapper.UserMapper;
+import com.example.polls.model.Role;
 import com.example.polls.model.User;
 import com.example.polls.payload.*;
-import com.example.polls.repository.PollRepository;
+import com.example.polls.payload.role.RoleBaseDto;
+import com.example.polls.payload.user.UserBasicDto;
+import com.example.polls.payload.user.UserDto;
+import com.example.polls.repository.RoleRepository;
 import com.example.polls.repository.UserRepository;
-import com.example.polls.repository.VoteRepository;
 import com.example.polls.security.UserPrincipal;
-import com.example.polls.service.PollService;
 import com.example.polls.security.CurrentUser;
-import com.example.polls.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -24,18 +38,14 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    private PollRepository pollRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    private VoteRepository voteRepository;
-
-    @Autowired
-    private PollService pollService;
+    PasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/user/me")
-    @PreAuthorize("hasRole('USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
         return userSummary;
@@ -47,40 +57,91 @@ public class UserController {
         return new UserIdentityAvailability(isAvailable);
     }
 
-    @GetMapping("/user/checkEmailAvailability")
-    public UserIdentityAvailability checkEmailAvailability(@RequestParam(value = "email") String email) {
-        Boolean isAvailable = !userRepository.existsByEmail(email);
-        return new UserIdentityAvailability(isAvailable);
-    }
-
-    @GetMapping("/users/{username}")
-    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
+    @GetMapping("/users")
+    public UserBasicDto getUserProfile(@RequestParam(value = "username") String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
-        long pollCount = pollRepository.countByCreatedBy(user.getId());
-        long voteCount = voteRepository.countByUserId(user.getId());
-
-        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getFullName(), user.getCreatedAt(), pollCount, voteCount);
-
-        return userProfile;
+        UserBasicDto userBasicDto = UserMapper.MAPPER.UserToUserBasicDto(user);
+        return userBasicDto;
     }
 
-    @GetMapping("/users/{username}/polls")
-    public PagedResponse<PollResponse> getPollsCreatedBy(@PathVariable(value = "username") String username,
-                                                         @CurrentUser UserPrincipal currentUser,
-                                                         @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                         @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return pollService.getPollsCreatedBy(username, currentUser, page, size);
+    @GetMapping("/users/{id}")
+    public UserBasicDto getUserById(@PathVariable(value="id") Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        UserBasicDto userBasicDto = UserMapper.MAPPER.UserToUserBasicDto(user);
+        return userBasicDto;
     }
 
+    @PostMapping("/users")
+    public ResponseEntity<?> post(@Valid @RequestBody UserDto userDto) {
+        if(userRepository.existsByUsername(userDto.getUsername())){
+            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+                    HttpStatus.BAD_REQUEST);
+        }
 
-    @GetMapping("/users/{username}/votes")
-    public PagedResponse<PollResponse> getPollsVotedBy(@PathVariable(value = "username") String username,
-                                                       @CurrentUser UserPrincipal currentUser,
-                                                       @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                                       @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
-        return pollService.getPollsVotedBy(username, currentUser, page, size);
+        if(userRepository.existsByEmail(userDto.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        for (RoleBaseDto role: userDto.getRoles()) {
+            Optional<Role> existingRole = roleRepository.findById(role.getId());
+
+            if(!existingRole.isPresent()) {
+                return new ResponseEntity(new ApiResponse(false, "Role was not found!"),
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        User user = UserMapper.MAPPER.UserDtoToUser(userDto);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/users/{username}")
+                .buildAndExpand(result.getUsername()).toUri();
+
+        return ResponseEntity.created(location).body(new ApiResponse(true, "User created successfully"));
     }
 
+    @PutMapping("/users")
+    public ResponseEntity<?> put(@Valid @RequestBody UserDto userDto) {
+
+        for (RoleBaseDto role: userDto.getRoles()) {
+            Optional<Role> existingRole = roleRepository.findById(role.getId());
+
+            if(!existingRole.isPresent()) {
+                return new ResponseEntity(new ApiResponse(false, "Role was not found!"),
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        Optional<User> user = userRepository.findById(userDto.getId());
+        if(user.isPresent()) {
+
+            User u = user.get();
+
+            if(null != userDto.getEmail() && !u.getEmail().equalsIgnoreCase(userDto.getEmail())) {
+                if(userRepository.existsByEmail(userDto.getEmail())) {
+                    return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+                            HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            u.setFirstname(userDto.getFirstname());
+            u.setLastname(userDto.getLastname());
+            u.setEmail(userDto.getEmail());
+
+            userRepository.save(u);
+            return ResponseEntity.ok(new ApiResponse(true, "User updated successfully"));
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

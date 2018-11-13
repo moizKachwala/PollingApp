@@ -1,32 +1,19 @@
-package com.example.polls.payload;
+package com.example.polls.payload.user;
 
-import javax.validation.constraints.*;
-
-/**
- * Created by rajeevkumarsingh on 02/08/17.
- */
-
-public class SignUpRequest {
-    @NotBlank
-    @Size(min = 4, max = 40)
+public class UserBaseDto {
+    private Long id;
     private String firstname;
-
-    @NotBlank
-    @Size(min = 4, max = 40)
     private String lastname;
-
-    @NotBlank
-    @Size(min = 3, max = 15)
     private String username;
-
-    @NotBlank
-    @Size(max = 40)
-    @Email
     private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 20)
-    private String password;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFirstname() {
         return firstname;
@@ -58,13 +45,5 @@ public class SignUpRequest {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
