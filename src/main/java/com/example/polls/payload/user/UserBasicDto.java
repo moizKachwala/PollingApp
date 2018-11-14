@@ -1,18 +1,18 @@
 package com.example.polls.payload.user;
 
-import com.example.polls.payload.role.RoleBasicDto;
+import com.example.polls.payload.role.RoleBaseDto;
 
 import java.util.Set;
 
 public class UserBasicDto extends UserBaseDto {
 
-    private Set<RoleBasicDto> roles;
+    private Set<RoleBaseDto> roles;
 
-    public Set<RoleBasicDto> getRoles() {
+    public Set<RoleBaseDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<RoleBasicDto> roles) {
+    public void setRoles(Set<RoleBaseDto> roles) {
         this.roles = roles;
     }
 }

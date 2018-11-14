@@ -1,6 +1,5 @@
 package com.example.polls.controller;
 
-import antlr.StringUtils;
 import com.example.polls.exception.ResourceNotFoundException;
 import com.example.polls.mapper.UserMapper;
 import com.example.polls.model.Role;
@@ -24,11 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
