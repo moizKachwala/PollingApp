@@ -139,4 +139,19 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value="id") Long id) {
+
+        Optional<User> user = userRepository.findById(id);
+
+        if(user.isPresent()) {
+            userRepository.delete(user.get());
+
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -10,4 +10,6 @@ public interface RoleMapper {
     RoleMapper MAPPER = Mappers.getMapper(RoleMapper.class);
 
     RoleBasicDto roleToRoleBasicDto(Role role);
+
+    Role roleBasicDtoToRole(RoleBasicDto roleBasicDto);
 }

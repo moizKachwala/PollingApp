@@ -12,4 +12,6 @@ public interface PermissionMapper {
     UserMapper MAPPER = Mappers.getMapper(UserMapper.class);
 
     Set<PermissionDto> permissionSetToPermissionDtoSet(Set<Permission> permissions);
+
+    Set<Permission> permissionDtoSetToPermissionSet(Set<PermissionDto> permissionDto);
 }
