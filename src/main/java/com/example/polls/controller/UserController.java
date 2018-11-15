@@ -12,8 +12,8 @@ import com.example.polls.repository.RoleRepository;
 import com.example.polls.repository.UserRepository;
 import com.example.polls.security.UserPrincipal;
 import com.example.polls.security.CurrentUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LogManager.getLogger(UserController.class);
 
     @GetMapping("/user/me")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
