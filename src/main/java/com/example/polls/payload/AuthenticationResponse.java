@@ -2,9 +2,6 @@ package com.example.polls.payload;
 
 import com.example.polls.payload.user.UserBasicDto;
 
-/**
- * Created by rajeevkumarsingh on 19/08/17.
- */
 public class AuthenticationResponse {
     private String token;
 
