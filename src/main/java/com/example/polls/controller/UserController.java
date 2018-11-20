@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<?> put(@PathVariable(value="id") Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> put(@PathVariable(value="id") Long id, @Valid @RequestBody UserDto userDto) {
         UserBasicDto result = userService.update(userDto, id);
         return ResponseEntity.ok(new ApiResponse(true, "User updated successfully"));
     }

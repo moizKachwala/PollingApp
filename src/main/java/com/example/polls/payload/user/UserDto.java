@@ -2,14 +2,14 @@ package com.example.polls.payload.user;
 
 import com.example.polls.payload.role.RoleBaseDto;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 public class UserDto extends UserBaseDto {
 
-    @NotBlank
     private String password;
 
+    @NotEmpty
     private Set<RoleBaseDto> roles;
 
     public String getPassword() {
