@@ -5,6 +5,8 @@ import com.example.polls.payload.role.RoleBasicDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface RoleMapper {
     RoleMapper MAPPER = Mappers.getMapper(RoleMapper.class);
@@ -12,4 +14,6 @@ public interface RoleMapper {
     RoleBasicDto roleToRoleBasicDto(Role role);
 
     Role roleBasicDtoToRole(RoleBasicDto roleBasicDto);
+
+    List<RoleBasicDto> roleListToRoleBasicDtoList(List<Role> roles);
 }

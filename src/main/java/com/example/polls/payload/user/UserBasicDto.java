@@ -1,6 +1,5 @@
 package com.example.polls.payload.user;
 
-import com.example.polls.model.Permission;
 import com.example.polls.payload.role.PermissionDto;
 import com.example.polls.payload.role.RoleBaseDto;
 

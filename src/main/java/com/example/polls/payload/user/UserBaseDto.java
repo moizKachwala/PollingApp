@@ -1,10 +1,16 @@
 package com.example.polls.payload.user;
 
+import javax.validation.constraints.NotBlank;
+
 public class UserBaseDto {
     private Long id;
     private String firstname;
     private String lastname;
+
+    @NotBlank
     private String username;
+
+    @NotBlank
     private String email;
 
     public Long getId() {

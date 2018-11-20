@@ -1,8 +1,11 @@
 package com.example.polls.payload.role;
 
+import javax.validation.constraints.NotBlank;
+
 public class RoleBaseDto {
     private Long id;
 
+    @NotBlank
     private String name;
 
     public Long getId() {
