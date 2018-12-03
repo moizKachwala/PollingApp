@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Username already exist");
         }
 
+
         if(userRepository.existsByEmail(userDto.getEmail())) {
             throw new IllegalArgumentException("Email already exist");
         }
