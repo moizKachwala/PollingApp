@@ -8,7 +8,6 @@ import com.example.polls.repository.UserRepository;
 import com.example.polls.security.JwtTokenProvider;
 import com.example.polls.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

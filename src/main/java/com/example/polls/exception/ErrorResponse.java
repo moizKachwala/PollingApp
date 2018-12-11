@@ -4,6 +4,11 @@ import java.util.List;
 
 public class ErrorResponse {
 
+    public ErrorResponse(String message) {
+        super();
+        this.message = message;
+    }
+
     public ErrorResponse(String message, List<String> details) {
         super();
         this.message = message;
