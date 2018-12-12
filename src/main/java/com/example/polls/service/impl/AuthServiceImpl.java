@@ -43,10 +43,6 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<User> user = userRepository.findByUsername(username);
 
-        if(!user.isPresent()) {
-            throw new IllegalArgumentException("user not found");
-        }
-
         UserBasicDto userBasicDto = UserMapper.MAPPER.UserToUserBasicDto(user.get());
 
         return new AuthenticationResponse(userBasicDto, jwt);

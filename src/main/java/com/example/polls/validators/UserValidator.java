@@ -20,10 +20,8 @@ public class UserValidator implements Validator {
     private static final String USER_EMAIL_INVALID = "user.email.invalid";
     private static final String USER_PASSWORD_MAX_LENGTH = "user.password.size";
 
-
     @Override
     public boolean supports(Class<?> aClass) {
-
         return UserDto.class.equals(aClass);
     }
 

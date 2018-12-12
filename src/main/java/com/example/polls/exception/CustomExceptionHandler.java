@@ -21,6 +21,7 @@ import java.util.Locale;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final String UNEXPECTED_ERROR = "exception.unexpected";
+    private static final String AUTH_INVALID_USER = "auth.invalid.user";
 
     @Autowired
     private MessageSource messageSource;
@@ -44,7 +45,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public final ResponseEntity<Object> handleBadCredentialException(BadCredentialsException ex, WebRequest request) {
-        ErrorResponse error = new ErrorResponse("Username or password is invalid!");
+        String errorMessage = messageSource.getMessage(AUTH_INVALID_USER, null, Locale.getDefault());
+        ErrorResponse error = new ErrorResponse(errorMessage);
         return new ResponseEntity(error, HttpStatus.UNAUTHORIZED);
     }
 
